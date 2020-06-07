@@ -497,6 +497,7 @@ impl<'planner> CrateSubplanner<'planner> {
       build_dependencies: build_deps,
       dev_dependencies: dev_deps,
       workspace_path_to_crate: self.crate_catalog_entry.workspace_path(&self.settings),
+      manifest_path: self.manifest_path()?,
       build_script_target: build_script_target_opt,
       raze_settings: self.crate_settings.clone(),
       source_details: self.produce_source_details(),
@@ -665,6 +666,33 @@ impl<'planner> CrateSubplanner<'planner> {
       .iter()
       .position(|t| t.kind == "custom-build")
       .map(|idx| all_targets.remove(idx))
+  }
+
+  /**
+   * Returns the relative path of the manifest for this crate.
+   *
+   * This function may access the file system. See #find_package_root_for_manifest for more
+   * details.
+   */
+  fn manifest_path(&self) -> Result<String> {
+    let package = self.crate_catalog_entry.package();
+    let manifest_path = PathBuf::from(&package.manifest_path);
+    assert!(manifest_path.is_absolute());
+
+    let package_root_path = self.find_package_root_for_manifest(&manifest_path)?;
+
+    // Get the relative path to the manifest.
+    let mut manifest_root_path_str = manifest_path
+      .to_string_lossy()
+      .into_owned()
+      .split_off(package_root_path.display().to_string().len() + 1);
+
+    // Some crates have a weird prefix, trim that.
+    if manifest_root_path_str.starts_with("./") {
+      manifest_root_path_str = manifest_root_path_str.split_off(2);
+    }
+
+    Ok(manifest_root_path_str.clone())
   }
 
   /**

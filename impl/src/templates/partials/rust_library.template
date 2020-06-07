@@ -1,4 +1,4 @@
-{%- if target_name_sanitized != crate_name_sanitized %}
+{%- if target_name_sanitized != crate_name_sanitized and rule_suffix == "" %}
 alias(
   name = "{{ crate_name_sanitized }}",
   actual = ":{{ target_name_sanitized }}",
@@ -6,7 +6,7 @@ alias(
 {%- endif %}
 
 rust_library(
-    name = "{{ target_name_sanitized }}",
+    name = "{{ target_name_sanitized }}{{ rule_suffix }}",
     crate_root = "{{ target.path }}",
     crate_type = "{{ target.kind }}",
     edition = "{{ target.edition }}",

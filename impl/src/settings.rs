@@ -131,6 +131,13 @@ pub struct CrateSettings {
   pub data_attr: Option<String>,
 
   /**
+   * The verbatim `srcs` clause to be used for build scripts, which overrides the default that
+   * includes all files in the current directory and all .rs files in subdirectories.
+   */
+   #[serde(default)]
+   pub buildrs_build_script_srcs_attr: Option<String>,
+
+  /**
    * Additional environment variables to add when running the build script.
    *
    * Values should looks like "KEY=VALUE".
@@ -225,6 +232,7 @@ impl Default for CrateSettings {
       additional_env: HashMap::new(),
       gen_buildrs: default_crate_settings_field_gen_buildrs(),
       data_attr: default_crate_settings_field_data_attr(),
+      buildrs_build_script_srcs_attr: None,
       buildrs_additional_environment_variables: Vec::new(),
       patch_args: Vec::new(),
       patch_cmds: Vec::new(),

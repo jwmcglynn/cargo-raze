@@ -62,6 +62,7 @@ pub struct CrateContext {
   pub licenses: Vec<LicenseData>,
   pub features: Vec<String>,
   pub workspace_path_to_crate: String,
+  pub manifest_path: String,
   pub dependencies: Vec<BuildableDependency>,
   pub build_dependencies: Vec<BuildableDependency>,
   pub dev_dependencies: Vec<BuildableDependency>,
